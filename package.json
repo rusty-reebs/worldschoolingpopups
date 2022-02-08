@@ -1,0 +1,29 @@
+{
+  "name": "worldschoolingpopups",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "devstart": "nodemon app.js",
+    "serverstart": "DEBUG=worldschoolingpopups:* npm run devstart"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rusty-reebs/worldschoolingpopups.git"
+  },
+  "author": "rusty-reebs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rusty-reebs/worldschoolingpopups/issues"
+  },
+  "homepage": "https://github.com/rusty-reebs/worldschoolingpopups#readme",
+  "dependencies": {
+    "debug": "^2.6.9",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "mongoose": "^6.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
