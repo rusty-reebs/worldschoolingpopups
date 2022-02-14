@@ -19,25 +19,26 @@ const EventSchema = new Schema({
     max: { type: Number, required: true },
   },
   temperature: {
-    min: { type: Number },
-    max: { type: Number },
+    high: { type: Number },
+    low: { type: Number },
   },
-  cost: {
-    amount: { type: Number, required: true },
-    currency: { type: String, required: true },
-  },
-  excursions: { type: String, maxlength: 1000 },
+  // cost: {
+  // amount: { type: Number, required: true },
+  // currency: { type: String, required: true },
+  // },
+  // excursions: { type: String, maxlength: 1000 },
   description: { type: String, required: true, maxlength: 2000 },
-  images: {
-    image1: { type: String, maxlength: 250 },
-    image2: { type: String, maxlength: 250 },
-    image3: { type: String, maxlength: 250 },
-  },
+  // images: {
+  // image1: { type: String, maxlength: 250 },
+  // image2: { type: String, maxlength: 250 },
+  // image3: { type: String, maxlength: 250 },
+  // },
   contact: {
     name: { type: String, required: true, maxlength: 30 },
     email: { type: String, required: true, maxlength: 30 },
+    website: { type: String, maxlength: 50 },
+    fbPage: { type: String, maxlength: 50 },
   },
-  website: { type: String, maxlength: 50 },
 });
 
 EventSchema.virtual("url").get(function () {

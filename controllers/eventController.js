@@ -44,15 +44,20 @@ exports.test_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
+  body("contactName", "Event must have a contact name.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
   async (req, res, next) => {
     const errors = validationResult(req);
     console.log(errors);
 
     let testPost = new Test({
       name: req.body.eventName,
+      contactName: req.body.contactName,
     });
     if (!errors.isEmpty()) {
-      res.status(400).send(errors.array());
+      res.status(400).json({ errors: errors.array() });
     } else {
       await testPost.save(function (err) {
         if (err) {
@@ -62,50 +67,105 @@ exports.test_post = [
           });
           console.log(err);
         }
-        res.json(testPost);
+        res.status(200).json(testPost);
       });
     }
-    // res.json();
   },
 ];
 
-exports.event_post = function (req, res, next) {
-  const newEvent = new Event({
-    name: req.body.eventName,
-    location: {
-      country: req.body.location.country,
-      state: req.body.location.state,
-      city: req.body.location.city,
-    },
-    date: {
-      start: req.body.date.start,
-      end: req.body.date.end,
-    },
-    accomIncluded: req.body.accomIncluded,
-    age: {
-      min: req.body.age.min,
-      max: req.body.age.max,
-    },
-    temperature: {
-      min: req.body.temperature.min,
-      max: req.body.temperature.max,
-    },
-    cost: {
-      amount: req.body.cost.amount,
-      currency: req.body.cost.currency,
-    },
-    excursions: req.body.excursions,
-    description: req.body.description,
-    contact: {
-      name: req.body.contact.name,
-      email: req.body.contact.email,
-    },
-    website: req.body.website,
-  });
-  newEvent.save(function (err) {
-    if (err) {
-      console.log(err);
+exports.event_post = [
+  body("eventName", "Event must have a name.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("country", "Event must have a country.").isLength({ min: 1 }),
+  body("city", "Event must have a city.").trim().isLength({ min: 1 }).escape(),
+  body("dateStart", "Event must have a start date.")
+    .isLength({ min: 1 })
+    .escape(),
+  body("dateEnd", "Event must have an end date.").isLength({ min: 1 }).escape(),
+  body(
+    "accomIncluded",
+    "Event must specify if accommodations are included."
+  ).isLength({ min: 1 }),
+  body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
+  body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
+  body("tempHigh", "Event must have an average high temperature.")
+    .trim()
+    .isNumeric()
+    .escape(),
+  body("tempLow", "Event must have an average low temperature.")
+    .trim()
+    .isNumeric()
+    .escape(),
+  body("description", "Event must have a description.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("contactName", "Event must have a contact name.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("contactEmail", "Event must have a valid contact email.")
+    .trim()
+    .isEmail()
+    .escape(),
+  body("contactFbPage", "Event FB page must be a valid URL.")
+    .trim()
+    .isURL()
+    .escape(),
+  body("contactWebsite", "Event website must be a valid URL.")
+    .trim()
+    .isURL()
+    .escape(),
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    let newEvent = new Event({
+      name: req.body.eventName,
+      location: {
+        country: req.body.country,
+        city: req.body.city,
+      },
+      date: {
+        start: req.body.dateStart,
+        end: req.body.dateEnd,
+      },
+      accomIncluded: req.body.accomIncluded,
+      age: {
+        min: req.body.ageMin,
+        max: req.body.ageMax,
+      },
+      temperature: {
+        low: req.body.tempLow,
+        high: req.body.tempHigh,
+      },
+      // cost: {
+      // amount: req.body.cost.amount,
+      // currency: req.body.cost.currency,
+      // },
+      // excursions: req.body.excursions,
+      description: req.body.description,
+      contact: {
+        name: req.body.contactName,
+        email: req.body.contactEmail,
+        website: req.body.contactWebsite,
+        fbPage: req.body.contactFbPage,
+      },
+    });
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+    } else {
+      await newEvent.save(function (err) {
+        if (err) {
+          res.status(500).json({
+            status: "Error",
+            message: "Database write error.",
+          });
+          console.log(err);
+        }
+        res.status(200).json(testPost);
+      });
     }
-  });
-  res.send("Event saved!");
-};
+  },
+];
