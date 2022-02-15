@@ -33,3 +33,46 @@ app.get("/search", eventController.event_search);
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)
 );
+
+// Notes for authentication, how to get the error messages
+// //Route
+
+// .post(
+//   passport.authenticate("local", {
+//     successRedirect: "/",
+//     failureRedirect: "/auth/login",
+//     failureMessage: true,
+//   })
+// );
+
+// //Controller
+
+// exports.handleLogin = (req, res, next) => {
+// res.render("login-form", { error: req.session.messages });
+// };
+
+// exports.user_login_post = (req, res, next) => {
+//   passport.authenticate('local', (err, user, info) => {
+//     if (err) return next(err);
+//     if (!user) return res.render('login', { message: info.message });
+//     req.login(user, (err) => {
+//       if (err) return next(err);
+
+//       res.redirect('/');
+//     });
+//   })(req, res, next);
+// };
+
+// app.post('/form', [
+//   check('name').isLength({ min: 3 }),
+//   check('email').custom(email => {
+//     if (alreadyHaveEmail(email)) {
+//       throw new Error('Email already registered')
+//     }
+//   }),
+//   check('age').isNumeric()
+// ], (req, res) => {
+//   const name  = req.body.name
+//   const email = req.body.email
+//   const age   = req.body.age
+// })

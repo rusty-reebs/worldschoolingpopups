@@ -1,6 +1,7 @@
 const Event = require("../models/event");
 const Test = require("../models/test");
 const { body, validationResult } = require("express-validator");
+const req = require("express/lib/request");
 
 exports.index = async function (req, res, next) {
   //   let { location: { country } } = req.query;
@@ -78,16 +79,15 @@ exports.event_post = [
     .trim()
     .isLength({ min: 1 })
     .escape(),
-  body("country", "Event must have a country.").isLength({ min: 1 }),
+  body("country", "Event must have a country.").isLength({ min: 1 }).escape(),
   body("city", "Event must have a city.").trim().isLength({ min: 1 }).escape(),
   body("dateStart", "Event must have a start date.")
     .isLength({ min: 1 })
     .escape(),
   body("dateEnd", "Event must have an end date.").isLength({ min: 1 }).escape(),
-  body(
-    "accomIncluded",
-    "Event must specify if accommodations are included."
-  ).isLength({ min: 1 }),
+  body("accomIncluded", "Event must specify if accommodations are included.")
+    .isLength({ min: 1 })
+    .escape(),
   body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
   body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
   body("tempHigh", "Event must have an average high temperature.")
@@ -111,10 +111,12 @@ exports.event_post = [
     .isEmail()
     .escape(),
   body("contactFbPage", "Event FB page must be a valid URL.")
+    .if((value, { req }) => req.body.contactFbPage)
     .trim()
     .isURL()
     .escape(),
   body("contactWebsite", "Event website must be a valid URL.")
+    .if((value, { req }) => req.body.contactWebsite)
     .trim()
     .isURL()
     .escape(),
@@ -164,7 +166,7 @@ exports.event_post = [
           });
           console.log(err);
         }
-        res.status(200).json(testPost);
+        res.status(200).json(newEvent);
       });
     }
   },
