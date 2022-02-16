@@ -81,6 +81,8 @@ exports.event_post = [
     .escape(),
   body("country", "Event must have a country.").isLength({ min: 1 }).escape(),
   body("city", "Event must have a city.").trim().isLength({ min: 1 }).escape(),
+  body("lat", "Event must have a latitude.").trim().isNumeric().escape(),
+  body("lon", "Event must have a longitude.").trim().isNumeric().escape(),
   body("dateStart", "Event must have a start date.")
     .isLength({ min: 1 })
     .escape(),
@@ -128,6 +130,8 @@ exports.event_post = [
       location: {
         country: req.body.country,
         city: req.body.city,
+        lat: req.body.lat,
+        lon: req.body.lon,
       },
       date: {
         start: req.body.dateStart,
@@ -154,6 +158,21 @@ exports.event_post = [
         website: req.body.contactWebsite,
         fbPage: req.body.contactFbPage,
       },
+      // images: {
+      //   image1: {
+      //     url: req.body.images.image1.url,
+      //     cloudinary_id: req.body.images.image1.cloudinary_id,
+      //   },
+      //   image2: {
+      //     url: req.body.images.image2.url,
+      //     cloudinary_id: req.body.images.image2.cloudinary_id,
+      //   },
+      //   image3: {
+      //     url: req.body.images.image3.url,
+      //     cloudinary_id: req.body.images.image3.cloudinary_id,
+      //   },
+      // },
+      images: req.body.images,
     });
     if (!errors.isEmpty()) {
       res.status(400).json({ errors: errors.array() });

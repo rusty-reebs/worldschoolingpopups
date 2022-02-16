@@ -8,6 +8,8 @@ const EventSchema = new Schema({
     country: { type: String, required: true },
     state: { type: String },
     city: { type: String, required: true, maxlength: 100 },
+    lat: { type: Number, required: true, maxlength: 15 },
+    lon: { type: Number, required: true, maxlength: 15 },
   },
   date: {
     start: { type: Date, required: true },
@@ -29,10 +31,20 @@ const EventSchema = new Schema({
   // excursions: { type: String, maxlength: 1000 },
   description: { type: String, required: true, maxlength: 2000 },
   // images: {
-  // image1: { type: String, maxlength: 250 },
-  // image2: { type: String, maxlength: 250 },
-  // image3: { type: String, maxlength: 250 },
+  //   image1: {
+  //     url: { type: String, maxlength: 500 },
+  //     cloudinary_id: { type: String, maxlength: 500 },
+  //   },
+  //   image2: {
+  //     url: { type: String, maxlength: 500 },
+  //     cloudinary_id: { type: String, maxlength: 500 },
+  //   },
+  //   image3: {
+  //     url: { type: String, maxlength: 500 },
+  //     cloudinary_id: { type: String, maxlength: 500 },
+  //   },
   // },
+  images: [{ url: String, cloudinary_id: String }],
   contact: {
     name: { type: String, required: true, maxlength: 30 },
     email: { type: String, required: true, maxlength: 30 },
