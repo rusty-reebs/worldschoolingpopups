@@ -83,10 +83,10 @@ exports.event_post = [
   body("city", "Event must have a city.").trim().isLength({ min: 1 }).escape(),
   body("lat", "Event must have a latitude.").trim().isNumeric().escape(),
   body("lon", "Event must have a longitude.").trim().isNumeric().escape(),
-  body("dateStart", "Event must have a start date.")
-    .isLength({ min: 1 })
-    .escape(),
-  body("dateEnd", "Event must have an end date.").isLength({ min: 1 }).escape(),
+  // body("dateStart", "Event must have a start date.")
+  //   .isLength({ min: 1 })
+  //   .escape(),
+  // body("dateEnd", "Event must have an end date.").isLength({ min: 1 }).escape(),
   body("accomIncluded", "Event must specify if accommodations are included.")
     .isLength({ min: 1 })
     .escape(),
@@ -134,6 +134,7 @@ exports.event_post = [
         lon: req.body.lon,
       },
       date: {
+        eventType: req.body.eventType,
         start: req.body.dateStart,
         end: req.body.dateEnd,
       },

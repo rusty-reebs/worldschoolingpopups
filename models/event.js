@@ -12,8 +12,9 @@ const EventSchema = new Schema({
     lon: { type: Number, required: true, maxlength: 15 },
   },
   date: {
-    start: { type: Date, required: true },
-    end: { type: Date, required: true },
+    eventType: { type: Boolean, required: true },
+    start: { type: Date },
+    end: { type: Date },
   },
   accomIncluded: { type: Boolean, required: true },
   age: {
