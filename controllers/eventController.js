@@ -5,20 +5,20 @@ const req = require("express/lib/request");
 
 exports.index = async function (req, res, next) {
   //   let { location: { country } } = req.query;
-  console.log(req.query);
-  let query = {};
-  if (req.query.accomIncluded) query.accomIncluded = req.query.accomIncluded;
-  if (req.query.location) {
-    //! get nested property
-    console.log("COUNTRY TRUE");
-  } else
-    try {
-      let events = await Event.find(query);
-      res.send(events);
-    } catch (err) {
-      res.status(400).json({ message: err });
-      console.log(err);
-    }
+  // console.log(req.query);
+  // let query = {};
+  // if (req.query.accomIncluded) query.accomIncluded = req.query.accomIncluded;
+  // if (req.query.location) {
+  //   //! get nested property
+  //   console.log("COUNTRY TRUE");
+  // } else
+  try {
+    let events = await Event.find();
+    res.send(events);
+  } catch (err) {
+    res.status(400).json({ message: err });
+    console.log(err);
+  }
 };
 
 exports.event_search = async function (req, res, next) {
@@ -32,7 +32,6 @@ exports.event_search = async function (req, res, next) {
 
 exports.event_get = async function (req, res, next) {
   try {
-    console.log(req);
     let event = await Event.findById(req.params.eventId).exec();
     res.send(event);
   } catch (err) {
@@ -75,21 +74,19 @@ exports.test_post = [
 ];
 
 exports.event_post = [
-  body("eventName", "Event must have a name.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  body("country", "Event must have a country.").isLength({ min: 1 }).escape(),
-  body("city", "Event must have a city.").trim().isLength({ min: 1 }).escape(),
+  body("eventName", "Event must have a name.").trim().isLength({ min: 1 }),
+  body("country", "Event must have a country.").isLength({ min: 1 }),
+  body("city", "Event must have a city.").trim().isLength({ min: 1 }),
   body("lat", "Event must have a latitude.").trim().isNumeric().escape(),
   body("lon", "Event must have a longitude.").trim().isNumeric().escape(),
   // body("dateStart", "Event must have a start date.")
   //   .isLength({ min: 1 })
   //   .escape(),
   // body("dateEnd", "Event must have an end date.").isLength({ min: 1 }).escape(),
-  body("accomIncluded", "Event must specify if accommodations are included.")
-    .isLength({ min: 1 })
-    .escape(),
+  body(
+    "accomIncluded",
+    "Event must specify if accommodations are included."
+  ).isLength({ min: 1 }),
   body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
   body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
   body("tempHigh", "Event must have an average high temperature.")
@@ -102,26 +99,21 @@ exports.event_post = [
     .escape(),
   body("description", "Event must have a description.")
     .trim()
-    .isLength({ min: 1 })
-    .escape(),
+    .isLength({ min: 1 }),
   body("contactName", "Event must have a contact name.")
     .trim()
-    .isLength({ min: 1 })
-    .escape(),
+    .isLength({ min: 1 }),
   body("contactEmail", "Event must have a valid contact email.")
     .trim()
-    .isEmail()
-    .escape(),
+    .isEmail(),
   body("contactFbPage", "Event FB page must be a valid URL.")
     .if((value, { req }) => req.body.contactFbPage)
     .trim()
-    .isURL()
-    .escape(),
+    .isURL(),
   body("contactWebsite", "Event website must be a valid URL.")
     .if((value, { req }) => req.body.contactWebsite)
     .trim()
-    .isURL()
-    .escape(),
+    .isURL(),
   async (req, res, next) => {
     const errors = validationResult(req);
     console.log(errors);
@@ -147,10 +139,6 @@ exports.event_post = [
         low: req.body.tempLow,
         high: req.body.tempHigh,
       },
-      // cost: {
-      // amount: req.body.cost.amount,
-      // currency: req.body.cost.currency,
-      // },
       // excursions: req.body.excursions,
       description: req.body.description,
       contact: {
@@ -159,20 +147,6 @@ exports.event_post = [
         website: req.body.contactWebsite,
         fbPage: req.body.contactFbPage,
       },
-      // images: {
-      //   image1: {
-      //     url: req.body.images.image1.url,
-      //     cloudinary_id: req.body.images.image1.cloudinary_id,
-      //   },
-      //   image2: {
-      //     url: req.body.images.image2.url,
-      //     cloudinary_id: req.body.images.image2.cloudinary_id,
-      //   },
-      //   image3: {
-      //     url: req.body.images.image3.url,
-      //     cloudinary_id: req.body.images.image3.cloudinary_id,
-      //   },
-      // },
       images: req.body.images,
     });
     if (!errors.isEmpty()) {
