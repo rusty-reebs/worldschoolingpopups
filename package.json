@@ -1,6 +1,10 @@
 {
   "name": "worldschoolingpopups",
   "version": "1.0.0",
+  "engines": {
+    "node": "16.2.0"
+  },
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
