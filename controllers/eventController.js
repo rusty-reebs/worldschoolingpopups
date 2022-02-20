@@ -1,17 +1,8 @@
 const Event = require("../models/event");
-const Test = require("../models/test");
 const { body, validationResult } = require("express-validator");
 const req = require("express/lib/request");
 
 exports.index = async function (req, res, next) {
-  //   let { location: { country } } = req.query;
-  // console.log(req.query);
-  // let query = {};
-  // if (req.query.accomIncluded) query.accomIncluded = req.query.accomIncluded;
-  // if (req.query.location) {
-  //   //! get nested property
-  //   console.log("COUNTRY TRUE");
-  // } else
   try {
     let events = await Event.find();
     res.send(events);
@@ -21,14 +12,14 @@ exports.index = async function (req, res, next) {
   }
 };
 
-exports.event_search = async function (req, res, next) {
-  try {
-    console.log(req.query);
-    // let results = await Event.find({ req.query.key: } )
-  } catch (err) {
-    console.log(err);
-  }
-};
+// exports.event_search = async function (req, res, next) {
+// try {
+// console.log(req.query);
+// let results = await Event.find({ req.query.key: } )
+// } catch (err) {
+// console.log(err);
+// }
+// };
 
 exports.event_get = async function (req, res, next) {
   try {
@@ -38,40 +29,6 @@ exports.event_get = async function (req, res, next) {
     console.log(err);
   }
 };
-
-exports.test_post = [
-  body("eventName", "Event must have a name.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  body("contactName", "Event must have a contact name.")
-    .trim()
-    .isLength({ min: 1 })
-    .escape(),
-  async (req, res, next) => {
-    const errors = validationResult(req);
-    console.log(errors);
-
-    let testPost = new Test({
-      name: req.body.eventName,
-      contactName: req.body.contactName,
-    });
-    if (!errors.isEmpty()) {
-      res.status(400).json({ errors: errors.array() });
-    } else {
-      await testPost.save(function (err) {
-        if (err) {
-          res.status(500).json({
-            status: "Error",
-            message: "Database write error.",
-          });
-          console.log(err);
-        }
-        res.status(200).json(testPost);
-      });
-    }
-  },
-];
 
 exports.event_post = [
   body("eventName", "Event must have a name.").trim().isLength({ min: 1 }),
@@ -87,8 +44,8 @@ exports.event_post = [
     "accomIncluded",
     "Event must specify if accommodations are included."
   ).isLength({ min: 1 }),
-  body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
-  body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
+  // body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
+  // body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
   body("tempHigh", "Event must have an average high temperature.")
     .trim()
     .isNumeric()
@@ -103,9 +60,9 @@ exports.event_post = [
   body("contactName", "Event must have a contact name.")
     .trim()
     .isLength({ min: 1 }),
-  body("contactEmail", "Event must have a valid contact email.")
-    .trim()
-    .isEmail(),
+  // body("contactEmail", "Event must have a valid contact email.")
+  //   .trim()
+  //   .isEmail(),
   body("contactFbPage", "Event FB page must be a valid URL.")
     .if((value, { req }) => req.body.contactFbPage)
     .trim()

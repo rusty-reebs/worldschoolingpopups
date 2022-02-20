@@ -15,20 +15,21 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://worldschoolingpopups.com",
+  optionsSuccessStatus: 200,
+};
+
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send("worldschoolingpopups");
-});
-app.get("/events", eventController.index);
-app.get("/events/:eventId", eventController.event_get);
+app.get("/events", cors(corsOptions), eventController.index);
+app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
 
-app.post("/events", eventController.event_post);
-app.post("/tests", eventController.test_post);
+// app.post("/events", eventController.event_post);
 
-app.get("/search", eventController.event_search);
+// app.get("/search", eventController.event_search);
 
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)

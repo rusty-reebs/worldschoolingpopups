@@ -18,8 +18,8 @@ const EventSchema = new Schema({
   },
   accomIncluded: { type: Boolean, required: true },
   age: {
-    min: { type: Number, required: true },
-    max: { type: Number, required: true },
+    min: { type: Number },
+    max: { type: Number },
   },
   temperature: {
     high: { type: Number },
@@ -30,7 +30,7 @@ const EventSchema = new Schema({
   images: [{ url: String, cloudinary_id: String }],
   contact: {
     name: { type: String, required: true, maxlength: 30 },
-    email: { type: String, required: true, maxlength: 30 },
+    email: { type: String, maxlength: 30 },
     website: { type: String, maxlength: 50 },
     fbPage: { type: String, maxlength: 50 },
   },
