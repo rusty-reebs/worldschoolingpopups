@@ -22,6 +22,8 @@
   },
   "homepage": "https://github.com/rusty-reebs/worldschoolingpopups#readme",
   "dependencies": {
+    "async": "^3.2.3",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "debug": "^2.6.9",
     "dotenv": "^16.0.0",

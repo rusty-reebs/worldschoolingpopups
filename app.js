@@ -8,8 +8,9 @@ const helmet = require("helmet");
 require("dotenv").config();
 
 const eventController = require("./controllers/eventController");
+const userController = require("./controllers/userController");
 
-const mongoDb = process.env.MONGO_URI;
+const mongoDb = process.env.MONGO_DEV;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -31,6 +32,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/events", cors(corsOptions), eventController.index);
 app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
+
+app.post("/register", userController.register_post);
+app.post("/login", userController.login_post);
 
 // app.post("/events", eventController.event_post);
 
