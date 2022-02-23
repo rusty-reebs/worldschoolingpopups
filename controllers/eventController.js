@@ -1,6 +1,5 @@
 const Event = require("../models/event");
 const { body, validationResult } = require("express-validator");
-const req = require("express/lib/request");
 
 exports.index = async function (req, res, next) {
   try {
@@ -117,7 +116,7 @@ exports.event_post = [
           });
           console.log(err);
         }
-        res.status(200).json(newEvent);
+        res.status(200).json({ message: "New event posted!", newEvent });
       });
     }
   },

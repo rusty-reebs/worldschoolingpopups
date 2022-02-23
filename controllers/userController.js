@@ -95,8 +95,8 @@ exports.login_post = [
             }
             if (result) {
               console.log("You're logged in!");
-              res.status(200).json({ message: "You're in!" });
-              //   next();
+              //   res.status(200).json({ message: "You're in!" });
+              next();
             } else {
               res
                 .status(400)
