@@ -5,10 +5,11 @@ const getUserDetails = require("../src/utils/getUserDetails");
 exports.index = async function (req, res, next) {
   let userDetails = "";
   try {
-    if (req.signedCookies.jwt) {
-      userDetails = getUserDetails(req.signedCookies.jwt);
-    }
+    // if (req.signedCookies.jwt) {
+    // userDetails = getUserDetails(req.signedCookies.jwt);
+    // }
     let events = await Event.find();
+    // res.json({ userDetails: userDetails, events: events });
     res.json({ userDetails: userDetails, events: events });
   } catch (err) {
     res.status(400).json({ message: err });

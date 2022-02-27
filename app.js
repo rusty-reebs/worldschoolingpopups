@@ -28,13 +28,13 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 
 const app = express();
 
-// const corsOptions = {
-//   origin: [
-//     "https://www.worldschoolingpopups.com",
-//     "https://www.worldschoolingpopups.com/events",
-//   ],
-//   optionsSuccessStatus: 200,
-// };
+const corsOptions = {
+  origin: [
+    "https://www.worldschoolingpopups.com",
+    "https://www.worldschoolingpopups.com/events",
+  ],
+  optionsSuccessStatus: 200,
+};
 
 passport.use(
   new LocalStrategy((username, password, done) => {
@@ -97,48 +97,48 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(jwtOptions.secretOrKey));
 
-app.use(cors());
+// app.use(cors());
 
-app.get("/events", eventController.index);
-app.get("/events/:eventId", eventController.event_get);
+app.get("/events", cors(corsOptions), eventController.index);
+app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
 
-app.post("/register", userController.register_post);
+// app.post("/register", userController.register_post);
 
-app.post("/login", userController.login_post, function (req, res, next) {
-  passport.authenticate("local", { session: false }, (err, user, info) => {
-    if (err || !user) {
-      return res
-        .status(400)
-        .json({ message: "Authentication problem.", user: user });
-    }
-    console.log("USER", user);
-    req.login(user, { session: false }, (err) => {
-      if (err) {
-        console.log("LOGIN ERROR", err);
-        res.json(err);
-      }
-      const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
-        expiresIn: "14d",
-      });
-      return res
-        .cookie(jwtOptions.jwtCookieName, token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          signed: true,
-        })
-        .status(200)
-        .json({
-          message: "Auth Passed",
-        });
-    });
-  })(req, res);
-});
+// app.post("/login", userController.login_post, function (req, res, next) {
+//   passport.authenticate("local", { session: false }, (err, user, info) => {
+//     if (err || !user) {
+//       return res
+//         .status(400)
+//         .json({ message: "Authentication problem.", user: user });
+//     }
+//     console.log("USER", user);
+//     req.login(user, { session: false }, (err) => {
+//       if (err) {
+//         console.log("LOGIN ERROR", err);
+//         res.json(err);
+//       }
+//       const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
+//         expiresIn: "14d",
+//       });
+//       return res
+//         .cookie(jwtOptions.jwtCookieName, token, {
+//           httpOnly: true,
+//           secure: process.env.NODE_ENV === "production",
+//           signed: true,
+//         })
+//         .status(200)
+//         .json({
+//           message: "Auth Passed",
+//         });
+//     });
+//   })(req, res);
+// });
 
-app.post(
-  "/events",
-  passport.authenticate("jwt", { session: false }),
-  eventController.event_post
-);
+// app.post(
+//   "/events",
+//   passport.authenticate("jwt", { session: false }),
+//   eventController.event_post
+// );
 
 // app.get(
 //   "/auth",
@@ -152,17 +152,17 @@ app.post(
 //   }
 // );
 
-app.get(
-  "/logout",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    req.logout();
-    return res
-      .clearCookie(jwtOptions.jwtCookieName)
-      .status(200)
-      .json({ message: "Successfully logged out." });
-  }
-);
+// app.get(
+//   "/logout",
+//   passport.authenticate("jwt", { session: false }),
+//   (req, res) => {
+//     req.logout();
+//     return res
+//       .clearCookie(jwtOptions.jwtCookieName)
+//       .status(200)
+//       .json({ message: "Successfully logged out." });
+//   }
+// );
 
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)
