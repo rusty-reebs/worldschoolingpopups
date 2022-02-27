@@ -9,9 +9,6 @@ exports.index = async function (req, res, next) {
       userDetails = getUserDetails(req.signedCookies.jwt);
     }
     let events = await Event.find();
-    res.set({
-      "Access-Control-Allow-Origin": "https://www.worldschooling.com",
-    });
     res.json({ userDetails: userDetails, events: events });
   } catch (err) {
     res.status(400).json({ message: err });
@@ -31,10 +28,6 @@ exports.index = async function (req, res, next) {
 exports.event_get = async function (req, res, next) {
   try {
     let event = await Event.findById(req.params.eventId).exec();
-    res.set({
-      "Access-Control-Allow-Origin": "https://www.worldschooling.com",
-    });
-
     res.send(event);
   } catch (err) {
     console.log(err);
