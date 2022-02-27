@@ -33,7 +33,7 @@ const corsOptions = {
     "https://www.worldschoolingpopups.com",
     "https://www.worldschoolingpopups.com/events",
   ],
-  methods: "GET, POST",
+  allowedHeaders: "Content-Type",
   optionsSuccessStatus: 200,
 };
 
@@ -98,7 +98,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(jwtOptions.secretOrKey));
 
-app.use(cors());
+// app.use(cors());
 
 app.get("/events", cors(corsOptions), eventController.index);
 app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
