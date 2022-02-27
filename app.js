@@ -29,11 +29,11 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 const app = express();
 
 const corsOptions = {
-  origin: [
-    "https://www.worldschoolingpopups.com",
-    "https://www.worldschoolingpopups.com/events",
-  ],
-  allowedHeaders: "Content-Type",
+  origin: true,
+  // [
+  //   "https://www.worldschoolingpopups.com",
+  //   "https://www.worldschoolingpopups.com/events",
+  // ],
   optionsSuccessStatus: 200,
 };
 
