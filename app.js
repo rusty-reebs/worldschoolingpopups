@@ -19,6 +19,7 @@ require("dotenv").config();
 
 const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
+const user = require("./models/user");
 
 const mongoDb = process.env.MONGO_DEV;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
@@ -101,35 +102,42 @@ app.use(cookieParser(jwtOptions.secretOrKey));
 app.get("/events", cors(corsOptions), eventController.index);
 app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
 
-app.post("/register", userController.register_post);
+app.post("/register", cors(corsOptions), userController.register_post);
 
-app.post("/login", userController.login_post, function (req, res, next) {
-  passport.authenticate("local", { session: false }, (err, user, info) => {
-    if (err || !user) {
-      return res
-        .status(400)
-        .json({ message: "Something is not right.", user: user });
-    }
-    console.log("USER", user);
-    req.login(user, { session: false }, (err) => {
-      if (err) {
-        console.log("LOGIN ERROR", err);
-        res.send(err);
+app.post(
+  "/login",
+  cors(corsOptions),
+  userController.login_post,
+  function (req, res, next) {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err || !user) {
+        return res
+          .status(400)
+          .json({ message: "Authentication problem.", user: user });
       }
-      const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
-        expiresIn: "14d",
+      console.log("USER", user);
+      req.login(user, { session: false }, (err) => {
+        if (err) {
+          console.log("LOGIN ERROR", err);
+          res.json(err);
+        }
+        const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
+          expiresIn: "14d",
+        });
+        return res
+          .cookie(jwtOptions.jwtCookieName, token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            signed: true,
+          })
+          .status(200)
+          .json({
+            message: "Auth Passed",
+          });
       });
-      return res
-        .cookie(jwtOptions.jwtCookieName, token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          signed: true,
-        })
-        .status(200)
-        .json({ message: "Auth Passed", user, token });
-    });
-  })(req, res);
-});
+    })(req, res);
+  }
+);
 
 app.post(
   "/events",
@@ -137,69 +145,30 @@ app.post(
   eventController.event_post
 );
 
-app.post(
-  "/private",
-  passport.authenticate("jwt", { session: false }),
-  function (req, res, next) {
-    res.status(200).json({ message: "AUTHENTICATED WITH JWT!" });
-  }
-);
+// app.get(
+//   "/auth",
+//   passport.authenticate("jwt", { session: false }),
+//   function (req, res, next) {
+//     res.status(200).json({
+//       message: "AUTH CALL SUCCESS!",
+//       token: true,
+//       user: { email: user.email, handle: user.handle, id: user._id },
+//     });
+//   }
+// );
 
 app.get(
   "/logout",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
+    req.logout();
     return res
       .clearCookie(jwtOptions.jwtCookieName)
       .status(200)
       .json({ message: "Successfully logged out." });
   }
 );
-// app.get("/search", eventController.event_search);
 
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)
 );
-
-// Notes for authentication, how to get the error messages
-// //Route
-
-// .post(
-//   passport.authenticate("local", {
-//     successRedirect: "/",
-//     failureRedirect: "/auth/login",
-//     failureMessage: true,
-//   })
-// );
-
-// //Controller
-
-// exports.handleLogin = (req, res, next) => {
-// res.render("login-form", { error: req.session.messages });
-// };
-
-// exports.user_login_post = (req, res, next) => {
-//   passport.authenticate('local', (err, user, info) => {
-//     if (err) return next(err);
-//     if (!user) return res.render('login', { message: info.message });
-//     req.login(user, (err) => {
-//       if (err) return next(err);
-
-//       res.redirect('/');
-//     });
-//   })(req, res, next);
-// };
-
-// app.post('/form', [
-//   check('name').isLength({ min: 3 }),
-//   check('email').custom(email => {
-//     if (alreadyHaveEmail(email)) {
-//       throw new Error('Email already registered')
-//     }
-//   }),
-//   check('age').isNumeric()
-// ], (req, res) => {
-//   const name  = req.body.name
-//   const email = req.body.email
-//   const age   = req.body.age
-// })

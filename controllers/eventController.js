@@ -1,10 +1,15 @@
 const Event = require("../models/event");
 const { body, validationResult } = require("express-validator");
+const getUserDetails = require("../src/utils/getUserDetails");
 
 exports.index = async function (req, res, next) {
+  let userDetails = "";
   try {
+    if (req.signedCookies.jwt) {
+      userDetails = getUserDetails(req.signedCookies.jwt);
+    }
     let events = await Event.find();
-    res.send(events);
+    res.json({ userDetails: userDetails, events: events });
   } catch (err) {
     res.status(400).json({ message: err });
     console.log(err);
@@ -59,9 +64,10 @@ exports.event_post = [
   body("contactName", "Event must have a contact name.")
     .trim()
     .isLength({ min: 1 }),
-  // body("contactEmail", "Event must have a valid contact email.")
-  //   .trim()
-  //   .isEmail(),
+  body("contactEmail", "Event must have a valid contact email.")
+    .if((value, { req }) => req.body.email)
+    .trim()
+    .isEmail(),
   body("contactFbPage", "Event FB page must be a valid URL.")
     .if((value, { req }) => req.body.contactFbPage)
     .trim()
@@ -74,6 +80,7 @@ exports.event_post = [
     const errors = validationResult(req);
     console.log(errors);
     let newEvent = new Event({
+      author: req.body.author,
       name: req.body.eventName,
       location: {
         country: req.body.country,
@@ -95,7 +102,7 @@ exports.event_post = [
         low: req.body.tempLow,
         high: req.body.tempHigh,
       },
-      // excursions: req.body.excursions,
+      excursions: req.body.excursions,
       description: req.body.description,
       contact: {
         name: req.body.contactName,

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const EventSchema = new Schema({
+  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   name: { type: String, required: true, maxlength: 300 },
   location: {
     country: { type: String, required: true },
@@ -25,7 +26,7 @@ const EventSchema = new Schema({
     high: { type: Number },
     low: { type: Number },
   },
-  // excursions: { type: String, maxlength: 1000 },
+  excursions: [{ type: String, maxlength: 1000 }],
   description: { type: String, required: true, maxlength: 2000 },
   images: [{ url: String, cloudinary_id: String }],
   contact: {

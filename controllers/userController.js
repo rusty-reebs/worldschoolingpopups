@@ -1,12 +1,12 @@
 const User = require("../models/user");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
-const async = require("async");
 
 exports.register_post = [
   body("email", "You must provide a valid email address.")
     .isEmail()
     .normalizeEmail(),
+  body("handle", "You must provide a username.").trim().isLength({ min: 2 }),
   body("password", "Your password must contain at least 6 characters.")
     .trim()
     .isLength({ min: 6 }),
@@ -22,6 +22,7 @@ exports.register_post = [
 
     let user = new User({
       email: req.body.email,
+      handle: req.body.handle,
       username: req.body.email,
       password: req.body.password,
     });
@@ -41,7 +42,7 @@ exports.register_post = [
               .json({ status: "Error", message: "Password problem." });
           }
           user.password = hashedPassword;
-          console.log(user.password);
+          console.log(user);
           user.save(function (err) {
             if (err) {
               console.log(err);
@@ -62,7 +63,7 @@ exports.login_post = [
   body("username", "You must enter a valid email address.")
     .isEmail()
     .normalizeEmail(),
-
+  body("password", "You must enter a password.").isLength({ min: 1 }),
   (req, res, next) => {
     const errors = validationResult(req);
     console.log(errors);
@@ -76,31 +77,31 @@ exports.login_post = [
       User.findOne({ username: username }).exec(function (err, user) {
         if (err) {
           return res.status(500).json({
-            status: "Error",
-            message: "Database error.",
+            errors: [{ msg: "Database error." }],
           });
         }
         if (!user) {
-          res
-            .status(400)
-            .json({ status: "Error", message: "Email not found." });
+          res.status(400).json({
+            errors: [{ msg: "Email not found." }],
+          });
         } else {
           bcrypt.compare(password, user.password, (err, result) => {
             if (err) {
               console.log(err);
-              res
-                .status(400)
-                .json({ status: "Error", message: "Password problem." });
-              return done(null, false, { message: "Password problem." });
+              res.status(400).json({
+                errors: [{ msg: "Password problem." }],
+              });
+              return done(null, false, {
+                errors: [{ msg: "Password problem." }],
+              });
             }
             if (result) {
               console.log("You're logged in!");
-              //   res.status(200).json({ message: "You're in!" });
               next();
             } else {
-              res
-                .status(400)
-                .json({ status: "Error", message: "Check your password." });
+              res.status(400).json({
+                errors: [{ msg: "Check your password." }],
+              });
             }
           });
         }
