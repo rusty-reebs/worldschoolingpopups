@@ -21,7 +21,7 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
-const mongoDb = process.env.MONGO_DEV;
+const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -141,6 +141,7 @@ app.post(
 
 app.post(
   "/events",
+  cors(corsOptions),
   passport.authenticate("jwt", { session: false }),
   eventController.event_post
 );
@@ -159,6 +160,7 @@ app.post(
 
 app.get(
   "/logout",
+  cors(corsOptions),
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     req.logout();
