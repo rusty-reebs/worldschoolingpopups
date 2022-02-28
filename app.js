@@ -28,15 +28,14 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 
 const app = express();
 
-// const corsOptions = {
-//   origin: [
-//     "https://www.worldschoolingpopups.com",
-//     "https://www.worldschoolingpopups.com/",
-//     "https://www.worldschoolingpopups.com/events",
-//     // "http://127.0.0.1:4000",
-//   ],
-//   optionsSuccessStatus: 200,
-// };
+const corsOptions = {
+  origin: [
+    "https://www.worldschoolingpopups.com",
+    "https://www.worldschoolingpopups.com/",
+    "https://www.worldschoolingpopups.com/events",
+  ],
+  optionsSuccessStatus: 200,
+};
 
 passport.use(
   new LocalStrategy((username, password, done) => {
@@ -101,43 +100,49 @@ app.use(cookieParser(jwtOptions.secretOrKey));
 
 // app.use(cors());
 
-app.get("/events", cors(), eventController.index);
-app.get("/events/:eventId", eventController.event_get);
+app.get("/events", cors(corsOptions), eventController.index);
+app.get("/events/:eventId", cors(corsOptions), eventController.event_get);
 
-app.post("/register", userController.register_post);
+app.post("/register", cors(corsOptions), userController.register_post);
 
-app.post("/login", userController.login_post, function (req, res, next) {
-  passport.authenticate("local", { session: false }, (err, user, info) => {
-    if (err || !user) {
-      return res
-        .status(400)
-        .json({ message: "Authentication problem.", user: user });
-    }
-    console.log("USER", user);
-    req.login(user, { session: false }, (err) => {
-      if (err) {
-        console.log("LOGIN ERROR", err);
-        res.json(err);
+app.post(
+  "/login",
+  cors(corsOptions),
+  userController.login_post,
+  function (req, res, next) {
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err || !user) {
+        return res
+          .status(400)
+          .json({ message: "Authentication problem.", user: user });
       }
-      const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
-        expiresIn: "14d",
-      });
-      return res
-        .cookie(jwtOptions.jwtCookieName, token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          signed: true,
-        })
-        .status(200)
-        .json({
-          message: "Auth Passed",
+      console.log("USER", user);
+      req.login(user, { session: false }, (err) => {
+        if (err) {
+          console.log("LOGIN ERROR", err);
+          res.json(err);
+        }
+        const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
+          expiresIn: "14d",
         });
-    });
-  })(req, res);
-});
+        return res
+          .cookie(jwtOptions.jwtCookieName, token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            signed: true,
+          })
+          .status(200)
+          .json({
+            message: "Auth Passed",
+          });
+      });
+    })(req, res);
+  }
+);
 
 app.post(
   "/events",
+  cors(corsOptions),
   passport.authenticate("jwt", { session: false }),
   eventController.event_post
 );
@@ -156,6 +161,7 @@ app.post(
 
 app.get(
   "/logout",
+  cors(corsOptions),
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     req.logout();
