@@ -31,8 +31,9 @@ const app = express();
 const corsOptions = {
   origin: [
     "https://www.worldschoolingpopups.com",
+    "https://www.worldschoolingpopups.com/",
     "https://www.worldschoolingpopups.com/events",
-    "http://127.0.0.1:4000",
+    // "http://127.0.0.1:4000",
   ],
   optionsSuccessStatus: 200,
 };
