@@ -99,9 +99,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(jwtOptions.secretOrKey));
 
-app.use(cors());
+// app.use(cors());
 
-app.get("/events", eventController.index);
+app.get("/events", cors(), eventController.index);
 app.get("/events/:eventId", eventController.event_get);
 
 app.post("/register", userController.register_post);
