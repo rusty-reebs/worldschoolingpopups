@@ -30,6 +30,7 @@ const app = express();
 
 const corsOptions = {
   origin: true,
+  credentials: true,
   // [
   // "https://www.worldschoolingpopups.com",
   // "https://www.worldschoolingpopups.com/",
