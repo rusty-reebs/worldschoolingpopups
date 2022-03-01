@@ -165,7 +165,9 @@ app.get(
   (req, res) => {
     req.logout();
     return res
-      .clearCookie(jwtOptions.jwtCookieName)
+      .clearCookie(jwtOptions.jwtCookieName, {
+        sameSite: "none",
+      })
       .status(200)
       .json({ message: "Successfully logged out." });
   }
