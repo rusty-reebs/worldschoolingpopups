@@ -34,6 +34,7 @@ const corsOptions = {
     "https://www.worldschoolingpopups.com/",
     "https://www.worldschoolingpopups.com/events",
   ],
+  allowedHeaders: "Content-Type",
   optionsSuccessStatus: 200,
 };
 
