@@ -131,6 +131,7 @@ app.post("/login", userController.login_post, function (req, res, next) {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           signed: true,
+          sameSite: "none",
         })
         .status(200)
         .json({
