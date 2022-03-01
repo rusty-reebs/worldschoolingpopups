@@ -166,6 +166,8 @@ app.get(
     req.logout();
     return res
       .clearCookie(jwtOptions.jwtCookieName, {
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
         sameSite: "none",
       })
       .status(200)
