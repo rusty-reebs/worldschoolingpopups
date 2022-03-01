@@ -31,12 +31,13 @@ const app = express();
 const corsOptions = {
   origin: true,
   credentials: true,
+  // preflightContinue: true,
   // [
   // "https://www.worldschoolingpopups.com",
   // "https://www.worldschoolingpopups.com/",
   // "https://www.worldschoolingpopups.com/events",
   // ],
-  // allowedHeaders: "Content-Type",
+  allowedHeaders: "Content-Type, Accept",
   optionsSuccessStatus: 200,
 };
 
