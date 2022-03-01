@@ -29,12 +29,13 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 const app = express();
 
 const corsOptions = {
-  origin: true,
-  // [
-  // "https://www.worldschoolingpopups.com",
-  // "https://www.worldschoolingpopups.com/",
-  // "https://www.worldschoolingpopups.com/events",
-  // ],
+  // origin: true, //! was working with this
+  origin: [
+    "https://www.worldschoolingpopups.com",
+    "https://www.worldschoolingpopups.com/",
+    "https://www.worldschoolingpopups.com/events",
+    "http://127.0.0.1:3000",
+  ],
   preflightContinue: true,
   credentials: true,
   allowedHeaders: "Content-Type, Accept",
