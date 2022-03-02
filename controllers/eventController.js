@@ -50,13 +50,15 @@ exports.event_post = [
   ).isLength({ min: 1 }),
   // body("ageMin", "Event must have a minimum age.").trim().isNumeric().escape(),
   // body("ageMax", "Event must have a maximum age.").trim().isNumeric().escape(),
-  body("tempHigh", "Event must have an average high temperature.")
+  body("tempHigh", "Temperature must be a number.")
+    .if((value, { req }) => req.body.tempHigh)
     .trim()
-    .isNumeric()
+    // .isNumeric()
     .escape(),
-  body("tempLow", "Event must have an average low temperature.")
+  body("tempLow", "Temperature must be a number.")
+    .if((value, { req }) => req.body.tempLow)
     .trim()
-    .isNumeric()
+    // .isNumeric()
     .escape(),
   body("description", "Event must have a description.")
     .trim()

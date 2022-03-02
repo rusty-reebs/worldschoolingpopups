@@ -23,8 +23,8 @@ const EventSchema = new Schema({
     max: { type: Number },
   },
   temperature: {
-    high: { type: Number },
-    low: { type: Number },
+    high: { type: String },
+    low: { type: String },
   },
   excursions: [{ type: String, maxlength: 1000 }],
   description: { type: String, required: true, maxlength: 2000 },
