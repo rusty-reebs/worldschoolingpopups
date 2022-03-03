@@ -129,7 +129,8 @@ app.post("/login", userController.login_post, function (req, res, next) {
       return res
         .cookie(jwtOptions.jwtCookieName, token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
+          secure: process.env.NODE_ENV === "production", //! USE FOR PROD
+          // secure: true, //! USE FOR DEVELOPMENT
           signed: true,
           sameSite: "none",
         })
