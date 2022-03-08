@@ -107,6 +107,11 @@ app.use(cors(corsOptions));
 
 app.get("/events", eventController.index);
 app.get("/events/:eventId", eventController.event_get);
+app.get(
+  "/events/:userId",
+  passport.authenticate("jwt", { session: false }),
+  eventController.yourEvents_get
+);
 
 app.post("/register", userController.register_post);
 

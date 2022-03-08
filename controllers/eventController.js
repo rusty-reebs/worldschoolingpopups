@@ -25,6 +25,23 @@ exports.index = async function (req, res, next) {
 // }
 // };
 
+exports.yourEvents_get = async function (req, res, next) {
+  try {
+    // populate event name, image
+    let events = Event.find({ author: req.params.id })
+      .populate("name")
+      .populate("images")
+      .exec(function (err, events) {
+        if (err) {
+          return console.log(err);
+        }
+        res.send(events);
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 exports.event_get = async function (req, res, next) {
   try {
     let event = await Event.findById(req.params.eventId).exec();
