@@ -81,10 +81,11 @@ exports.event_post = [
     .trim()
     .isLength({ min: 1 }),
   body("contactName", "Event must have a contact name.")
+    .if((value, { req }) => req.body.contactName)
     .trim()
     .isLength({ min: 1 }),
   body("contactEmail", "Event must have a valid contact email.")
-    .if((value, { req }) => req.body.email)
+    .if((value, { req }) => req.body.contactEmail)
     .trim()
     .isEmail(),
   body("contactFbPage", "Event FB page must be a valid URL.")
