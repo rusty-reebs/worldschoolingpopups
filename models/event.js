@@ -30,7 +30,7 @@ const EventSchema = new Schema({
   description: { type: String, required: true, maxlength: 2000 },
   images: [{ url: String, cloudinary_id: String }],
   contact: {
-    name: { type: String, required: true, maxlength: 30 },
+    name: { type: String, maxlength: 30 },
     email: { type: String, maxlength: 30 },
     website: { type: String, maxlength: 50 },
     fbPage: { type: String, maxlength: 50 },
