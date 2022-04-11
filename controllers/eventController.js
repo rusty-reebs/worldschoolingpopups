@@ -42,6 +42,8 @@ exports.yourEvents_get = async function (req, res, next) {
   }
 };
 
+exports.event_search_get = async function (req, res, next) {};
+
 exports.event_get = async function (req, res, next) {
   try {
     let event = await Event.findById(req.params.eventId).exec();

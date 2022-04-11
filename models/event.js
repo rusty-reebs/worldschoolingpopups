@@ -13,7 +13,7 @@ const EventSchema = new Schema({
     lon: { type: Number, required: true, maxlength: 15 },
   },
   date: {
-    eventType: { type: Boolean, required: true },
+    eventType: { type: String, required: true },
     start: { type: Date },
     end: { type: Date },
   },

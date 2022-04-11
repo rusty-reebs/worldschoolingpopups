@@ -21,7 +21,7 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
-const mongoDb = process.env.MONGO_URI;
+const mongoDb = process.env.MONGO_DEV;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -112,6 +112,8 @@ app.get(
   passport.authenticate("jwt", { session: false }),
   eventController.yourEvents_get
 );
+
+app.get("/events/search", eventController.event_search_get);
 
 app.post("/register", userController.register_post);
 
