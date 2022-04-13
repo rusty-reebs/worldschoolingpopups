@@ -8,7 +8,10 @@ exports.index = async function (req, res, next) {
     if (req.signedCookies.jwt) {
       userDetails = getUserDetails(req.signedCookies.jwt);
     }
-    let events = await Event.find();
+    let events = await Event.find()
+      .sort({ "date.eventType": 1 })
+      .sort({ "date.start": 1 });
+    // let events = await Event.find();
     res.json({ userDetails: userDetails, events: events });
   } catch (err) {
     res.status(400).json({ message: err });
