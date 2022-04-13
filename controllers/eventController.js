@@ -12,7 +12,8 @@ exports.index = async function (req, res, next) {
       .sort({ "date.eventType": 1 })
       .sort({ "date.start": 1 });
     // let events = await Event.find();
-    res.json({ userDetails: userDetails, events: events });
+    let records = await Event.countDocuments();
+    res.json({ userDetails: userDetails, events: events, records: records });
   } catch (err) {
     res.status(400).json({ message: err });
     console.log(err);
