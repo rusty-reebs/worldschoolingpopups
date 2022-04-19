@@ -27,13 +27,13 @@ const EventSchema = new Schema({
     low: { type: String },
   },
   excursions: [{ type: String, maxlength: 1000 }],
-  description: { type: String, required: true, maxlength: 2000 },
+  description: { type: String, required: true, maxlength: 3000 },
   images: [{ url: String, cloudinary_id: String }],
   contact: {
     name: { type: String, maxlength: 50 },
     email: { type: String, maxlength: 50 },
-    website: { type: String, maxlength: 50 },
-    fbPage: { type: String, maxlength: 50 },
+    website: { type: String, maxlength: 100 },
+    fbPage: { type: String, maxlength: 100 },
   },
 });
 

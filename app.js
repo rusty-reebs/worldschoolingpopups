@@ -21,6 +21,7 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
+// const mongoDb = process.env.MONGO_DEV;
 const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
@@ -174,7 +175,8 @@ app.get(
     req.logout();
     return res
       .clearCookie(jwtOptions.jwtCookieName, {
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production", //! USE FOR PRODUCTION
+        // secure: true, //! USE FOR DEVELOPMENT
         httpOnly: true,
         sameSite: "none",
       })
