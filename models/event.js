@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const EventSchema = new Schema({
   author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  dateSubmitted: { type: Date },
   name: { type: String, required: true, maxlength: 300 },
   location: {
     country: { type: String, required: true },

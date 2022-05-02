@@ -8,12 +8,25 @@ exports.index = async function (req, res, next) {
     if (req.signedCookies.jwt) {
       userDetails = getUserDetails(req.signedCookies.jwt);
     }
+    // default sorting
     let events = await Event.find()
       .sort({ "date.eventType": 1 })
       .sort({ "date.start": 1 });
-    // let events = await Event.find();
+
+    // get total record count
     let records = await Event.countDocuments();
-    res.json({ userDetails: userDetails, events: events, records: records });
+
+    // search for most recent record
+    let mostRecentRecord = await Event.findOne()
+      .sort({ $natural: -1 })
+      .limit(1);
+
+    res.json({
+      userDetails: userDetails,
+      events: events,
+      records: records,
+      lastUpdated: mostRecentRecord.dateSubmitted,
+    });
   } catch (err) {
     res.status(400).json({ message: err });
     console.log(err);
@@ -105,8 +118,10 @@ exports.event_post = [
   async (req, res, next) => {
     const errors = validationResult(req);
     console.log(errors);
+    let dateSubmitted = new Date();
     let newEvent = new Event({
       author: req.body.author,
+      dateSubmitted: dateSubmitted,
       name: req.body.eventName,
       location: {
         country: req.body.country,

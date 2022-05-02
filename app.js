@@ -35,10 +35,11 @@ const corsOptions = {
   //   "https://www.worldschoolingpopups.com",
   //   "https://www.worldschoolingpopups.com/",
   //   "https://www.worldschoolingpopups.com/events",
-  //   "http://127.0.0.1:3000",
+  // "http://127.0.0.1:3000", //! on for development
+  // "http://localhost:3000", //! on for development
   // ],
-  preflightContinue: true,
-  credentials: true,
+  preflightContinue: true, //! off for development
+  credentials: true, //! off for development
   allowedHeaders: "Content-Type, Accept",
   optionsSuccessStatus: 200,
 };
