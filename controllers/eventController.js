@@ -18,7 +18,7 @@ exports.index = async function (req, res, next) {
 
     // search for most recent record
     let mostRecentRecord = await Event.findOne()
-      .sort({ $natural: -1 })
+      .sort({ dateSubmitted: -1 })
       .limit(1);
 
     res.json({
