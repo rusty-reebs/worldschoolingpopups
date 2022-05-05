@@ -23,8 +23,8 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
-const mongoDb = process.env.MONGO_DEV;
-// const mongoDb = process.env.MONGO_URI;
+// const mongoDb = process.env.MONGO_DEV;
+const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
