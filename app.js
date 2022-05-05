@@ -1,5 +1,7 @@
 // app.js
 
+//TODO fix token expiration
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -21,8 +23,8 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
-// const mongoDb = process.env.MONGO_DEV;
-const mongoDb = process.env.MONGO_URI;
+const mongoDb = process.env.MONGO_DEV;
+// const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -109,13 +111,12 @@ app.use(cors(corsOptions));
 
 app.get("/events", eventController.index);
 app.get("/events/:eventId", eventController.event_get);
-app.get(
-  "/events/:userId",
-  passport.authenticate("jwt", { session: false }),
-  eventController.yourEvents_get
-);
 
-app.get("/events/search", eventController.event_search_get);
+app.post(
+  "/events/:eventId/update",
+  passport.authenticate("jwt", { session: false }),
+  eventController.event_update_post
+);
 
 app.post("/register", userController.register_post);
 
@@ -156,18 +157,6 @@ app.post(
   passport.authenticate("jwt", { session: false }),
   eventController.event_post
 );
-
-// app.get(
-//   "/auth",
-//   passport.authenticate("jwt", { session: false }),
-//   function (req, res, next) {
-//     res.status(200).json({
-//       message: "AUTH CALL SUCCESS!",
-//       token: true,
-//       user: { email: user.email, handle: user.handle, id: user._id },
-//     });
-//   }
-// );
 
 app.get(
   "/logout",
