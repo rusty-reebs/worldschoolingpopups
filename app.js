@@ -1,6 +1,7 @@
 // app.js
 
-//TODO fix token expiration
+//TODO fix token expiration. Need to check token, if expired then go to login page.
+//TODO "Your session has expired."
 
 const express = require("express");
 const mongoose = require("mongoose");
