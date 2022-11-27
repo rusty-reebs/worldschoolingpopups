@@ -119,7 +119,7 @@ app.post(
   eventController.event_update_post
 );
 
-app.post("/register", userController.register_post);
+// app.post("/register", userController.register_post);
 
 app.post("/login", userController.login_post, function (req, res, next) {
   passport.authenticate("local", { session: false }, (err, user, info) => {
