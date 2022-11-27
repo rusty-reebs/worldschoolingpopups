@@ -24,8 +24,8 @@ const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
 const user = require("./models/user");
 
-// const mongoDb = process.env.MONGO_DEV;
-const mongoDb = process.env.MONGO_URI;
+const mongoDb = process.env.MONGO_DEV;
+// const mongoDb = process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -119,7 +119,7 @@ app.post(
   eventController.event_update_post
 );
 
-app.post("/register", userController.register_post);
+// app.post("/register", userController.register_post);
 
 app.post("/login", userController.login_post, function (req, res, next) {
   passport.authenticate("local", { session: false }, (err, user, info) => {
@@ -157,6 +157,18 @@ app.post(
   "/events",
   passport.authenticate("jwt", { session: false }),
   eventController.event_post
+);
+
+app.post(
+  "/test",
+  passport.authenticate("jwt", { session: false }),
+  async function (req, res) {
+    try {
+      res.status(200).json({ message: "passed" });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 );
 
 app.get(

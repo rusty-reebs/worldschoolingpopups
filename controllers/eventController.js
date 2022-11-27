@@ -6,7 +6,8 @@ exports.index = async function (req, res, next) {
   let userDetails = "";
   try {
     if (req.signedCookies.jwt) {
-      userDetails = getUserDetails(req.signedCookies.jwt);
+      userDetails = await getUserDetails(req.signedCookies.jwt);
+      console.log("👉 userDetails", userDetails);
     }
     // default sorting
     let events = await Event.find()
