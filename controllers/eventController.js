@@ -245,3 +245,13 @@ exports.event_update_post = [
     }
   },
 ];
+
+// //! need to test in dev database
+exports.event_delete_post = async (req, res, next) => {
+  try {
+    //     let event = await Event.findByIdAndDelete(req.params.eventId).exec();
+    //     res.status(200).send(event);
+  } catch (err) {
+    console.log(err);
+  }
+};

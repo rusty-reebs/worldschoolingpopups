@@ -96,7 +96,7 @@ exports.login_post = [
               });
             }
             if (result) {
-              console.log("You're logged in!");
+              console.log("Password ok");
               next();
             } else {
               res.status(400).json({

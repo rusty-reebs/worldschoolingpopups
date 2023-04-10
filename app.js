@@ -22,10 +22,11 @@ require("dotenv").config();
 
 const eventController = require("./controllers/eventController");
 const userController = require("./controllers/userController");
+const adminController = require("./controllers/adminController");
 const user = require("./models/user");
 
-// const mongoDb = process.env.MONGO_DEV;
-const mongoDb = process.env.MONGO_URI;
+const isDev = process.env.NODE_ENV === "development";
+const mongoDb = isDev ? process.env.MONGO_DEV : process.env.MONGO_URI;
 mongoose.connect(mongoDb, { useUnifiedTopology: true, useNewUrlParser: true });
 const db = mongoose.connection;
 db.on("Error", console.error.bind(console, "Mongo connection error."));
@@ -34,14 +35,14 @@ const app = express();
 
 const corsOptions = {
   origin: true, //! works with this
-  // origin: [
-  //   "https://www.worldschoolingpopups.com",
-  //   "https://www.worldschoolingpopups.com/",
-  //   "https://www.worldschoolingpopups.com/events",
-  // "http://127.0.0.1:3000", //! on for development
-  // "http://localhost:3000", //! on for development
-  // ],
-  preflightContinue: true, //! off for development
+  // origin: isDev
+  //   ? ["http://127.0.0.1:3000", "http://localhost:3000"]
+  //   : [
+  //       "https://www.worldschoolingpopups.com",
+  //       "https://www.worldschoolingpopups.com/",
+  //       "https://www.worldschoolingpopups.com/events",
+  //     ],
+  // preflightContinue: true, //! off for development
   credentials: true, //! off for development
   allowedHeaders: "Content-Type, Accept",
   optionsSuccessStatus: 200,
@@ -76,28 +77,28 @@ const cookieExtractor = (req) => {
   let token = null;
   if (req && req.cookies) {
     token = req.signedCookies[jwtOptions.jwtCookieName];
+    // token = req.cookies[jwtOptions.jwtCookieName];
   }
   return token;
 };
 
 const jwtOptions = {
-  jwtFromRequest: fromExtractors([
-    cookieExtractor,
-    // fromAuthHeaderAsBearerToken(),
-  ]),
+  jwtFromRequest:
+    // ExtractJWT.fromAuthHeaderAsBearerToken(),
+    fromExtractors([cookieExtractor]),
   secretOrKey: process.env.TOKEN,
   jwtCookieName: "jwt",
 };
 
 passport.use(
-  new JWTStrategy(jwtOptions, (jwtPayload, done) => {
-    //find the user in the db if needed. This function may be omitted if you store everything you need in the JWT payload.
+  new JWTStrategy(jwtOptions, async (jwtPayload, done) => {
+    //find the user in the db if needed. This function may be omitted if you store everything you need in the JWT payload.  //! yes it's in the payload
     return User.findById(jwtPayload.user._id)
       .then((user) => {
         return done(null, user);
       })
       .catch((err) => {
-        return done(err);
+        return done(err, false);
       });
   })
 );
@@ -114,12 +115,28 @@ app.get("/events", eventController.index);
 app.get("/events/:eventId", eventController.event_get);
 
 app.post(
+  "/events",
+  passport.authenticate("jwt", { session: false }),
+  eventController.event_post
+);
+
+app.post(
   "/events/:eventId/update",
   passport.authenticate("jwt", { session: false }),
   eventController.event_update_post
 );
 
-// app.post("/register", userController.register_post);
+app.post(
+  "/events/:eventId/delete",
+  passport.authenticate("jwt", { session: false }),
+  eventController.event_delete_post
+);
+
+app.get(
+  "/admin",
+  passport.authenticate("jwt", { session: false }),
+  adminController.index
+);
 
 app.post("/login", userController.login_post, function (req, res, next) {
   passport.authenticate("local", { session: false }, (err, user, info) => {
@@ -140,10 +157,11 @@ app.post("/login", userController.login_post, function (req, res, next) {
       return res
         .cookie(jwtOptions.jwtCookieName, token, {
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production", //! USE FOR PROD
+          // secure: process.env.NODE_ENV === "production", //! USE FOR PROD
           // secure: true, //! USE FOR DEVELOPMENT
+          secure: true,
           signed: true,
-          sameSite: "none",
+          // sameSite: "none",
         })
         .status(200)
         .json({
@@ -153,12 +171,6 @@ app.post("/login", userController.login_post, function (req, res, next) {
   })(req, res);
 });
 
-app.post(
-  "/events",
-  passport.authenticate("jwt", { session: false }),
-  eventController.event_post
-);
-
 app.get(
   "/logout",
   passport.authenticate("jwt", { session: false }),
@@ -166,8 +178,9 @@ app.get(
     req.logout();
     return res
       .clearCookie(jwtOptions.jwtCookieName, {
-        secure: process.env.NODE_ENV === "production", //! USE FOR PRODUCTION
+        // secure: process.env.NODE_ENV === "production", //! USE FOR PRODUCTION
         // secure: true, //! USE FOR DEVELOPMENT
+        secure: true,
         httpOnly: true,
         sameSite: "none",
       })
@@ -175,6 +188,8 @@ app.get(
       .json({ message: "Successfully logged out." });
   }
 );
+
+// app.post("/register", userController.register_post);
 
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)
