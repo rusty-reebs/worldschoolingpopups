@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const EventSchema = new Schema({
-  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  isArchived: { type: Boolean },
+  author: { type: Schema.Types.ObjectId, ref: "User" },
   dateSubmitted: { type: Date },
   name: { type: String, required: true, maxlength: 300 },
   location: {
@@ -12,6 +13,8 @@ const EventSchema = new Schema({
     city: { type: String, required: true, maxlength: 100 },
     lat: { type: Number, required: true, maxlength: 15 },
     lon: { type: Number, required: true, maxlength: 15 },
+    isMultiple: { type: Boolean },
+    isGlobal: { type: Boolean },
   },
   date: {
     eventType: { type: String, required: true },

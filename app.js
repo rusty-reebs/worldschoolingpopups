@@ -34,17 +34,13 @@ db.on("Error", console.error.bind(console, "Mongo connection error."));
 const app = express();
 
 const corsOptions = {
-  origin: true, //! works with this
-  // origin: isDev
-  //   ? ["http://127.0.0.1:3000", "http://localhost:3000"]
-  //   : [
-  //       "https://www.worldschoolingpopups.com",
-  //       "https://www.worldschoolingpopups.com/",
-  //       "https://www.worldschoolingpopups.com/events",
-  //     ],
-  // preflightContinue: true, //! off for development
-  credentials: true, //! off for development
-  allowedHeaders: "Content-Type, Accept",
+  // origin: true, //! works with this
+  origin: isDev
+    ? ["http://127.0.0.1:3000", "http://localhost:3000"]
+    : ["https://www.worldschoolingpopups.com"],
+  preflightContinue: true,
+  credentials: true,
+  allowedHeaders: "Content-Type, Accept, Authorization",
   optionsSuccessStatus: 200,
 };
 
@@ -83,22 +79,19 @@ const cookieExtractor = (req) => {
 };
 
 const jwtOptions = {
-  jwtFromRequest:
-    // ExtractJWT.fromAuthHeaderAsBearerToken(),
-    fromExtractors([cookieExtractor]),
+  jwtFromRequest: fromExtractors([cookieExtractor]),
   secretOrKey: process.env.TOKEN,
   jwtCookieName: "jwt",
 };
 
 passport.use(
   new JWTStrategy(jwtOptions, async (jwtPayload, done) => {
-    //find the user in the db if needed. This function may be omitted if you store everything you need in the JWT payload.  //! yes it's in the payload
     return User.findById(jwtPayload.user._id)
       .then((user) => {
         return done(null, user);
       })
       .catch((err) => {
-        return done(err, false);
+        return done(err, false, info);
       });
   })
 );
@@ -122,7 +115,7 @@ app.post(
 
 app.post(
   "/events/:eventId/update",
-  passport.authenticate("jwt", { session: false }),
+  // passport.authenticate("jwt", { session: false }),
   eventController.event_update_post
 );
 
@@ -132,11 +125,20 @@ app.post(
   eventController.event_delete_post
 );
 
-app.get(
-  "/admin",
+app.post(
+  "/events/:eventId/archive",
   passport.authenticate("jwt", { session: false }),
-  adminController.index
+  eventController.event_archive_post
 );
+
+app.get("/admin", (req, res, next) => {
+  !isDev
+    ? passport.authenticate("jwt", { session: false }, (err, user, info) => {
+        if (err || !user) return res.status(400).json(info);
+        adminController.index(req, res, next);
+      })(req, res, next)
+    : adminController.index(req, res, next);
+});
 
 app.post("/login", userController.login_post, function (req, res, next) {
   passport.authenticate("local", { session: false }, (err, user, info) => {
@@ -152,16 +154,17 @@ app.post("/login", userController.login_post, function (req, res, next) {
         res.json(err);
       }
       const token = jwt.sign({ user }, jwtOptions.secretOrKey, {
-        expiresIn: "14d",
+        // expiresIn: "14d",
+        expiresIn: 30,
       });
       return res
         .cookie(jwtOptions.jwtCookieName, token, {
-          httpOnly: true,
+          httpOnly: isDev,
           // secure: process.env.NODE_ENV === "production", //! USE FOR PROD
           // secure: true, //! USE FOR DEVELOPMENT
-          secure: true,
+          secure: isDev ? false : true,
           signed: true,
-          // sameSite: "none",
+          sameSite: "none",
         })
         .status(200)
         .json({
@@ -178,10 +181,10 @@ app.get(
     req.logout();
     return res
       .clearCookie(jwtOptions.jwtCookieName, {
+        httpOnly: isDev,
         // secure: process.env.NODE_ENV === "production", //! USE FOR PRODUCTION
         // secure: true, //! USE FOR DEVELOPMENT
-        secure: true,
-        httpOnly: true,
+        secure: isDev ? false : true,
         sameSite: "none",
       })
       .status(200)
@@ -190,6 +193,11 @@ app.get(
 );
 
 // app.post("/register", userController.register_post);
+
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({ error: err });
+});
 
 app.listen(process.env.PORT, () =>
   console.log("Listening on port", process.env.PORT)
